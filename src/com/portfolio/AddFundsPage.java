@@ -10,16 +10,13 @@ public class AddFundsPage extends javax.swing.JFrame {
     public AddFundsPage(String userName) {
         this.userName = userName;
         initComponents();
-        jButton1.addActionListener(e -> goBack());
-        jButton2.addActionListener(e -> addFunds());
+
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jColorChooser1 = new javax.swing.JColorChooser();
-        jColorChooser2 = new javax.swing.JColorChooser();
         jButton1 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -30,6 +27,11 @@ public class AddFundsPage extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton1.setText("Back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -42,6 +44,11 @@ public class AddFundsPage extends javax.swing.JFrame {
         jLabel2.setText("Amount Invested:");
 
         jButton2.setText("Add Funds");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -86,27 +93,16 @@ public class AddFundsPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.dispose(); 
+        new MainPage().setVisible(true); 
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JColorChooser jColorChooser1;
-    private javax.swing.JColorChooser jColorChooser2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    // End of variables declaration//GEN-END:variables
-private void goBack() {
-    this.dispose(); 
-    new MainPage().setVisible(true); 
-}
-
-private void addFunds() {
-    String fundName = jTextField1.getText().trim();
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+           String fundName = jTextField1.getText().trim();
     String amountText = jTextField2.getText().trim();
 
     if(fundName.isEmpty() || amountText.isEmpty()) {
@@ -151,13 +147,16 @@ private void addFunds() {
                 return;
             }
 
-            String insertInv = "INSERT INTO investments(user_id,fund_name,amount) VALUES(?,?,?)";
-            try (PreparedStatement pstInv = conn.prepareStatement(insertInv)) {
+            String insertOrUpdate = "INSERT INTO investments(user_id,fund_name,amount) VALUES(?,?,?) " +
+                        "ON DUPLICATE KEY UPDATE amount = amount + VALUES(amount)";
+            try (PreparedStatement pstInv = conn.prepareStatement(insertOrUpdate)) {
                 pstInv.setInt(1, userId);
                 pstInv.setString(2, fundName);
                 pstInv.setDouble(3, amount);
                 pstInv.executeUpdate();
             }
+
+
 
             JOptionPane.showMessageDialog(this, "Funds added successfully!");
             jTextField1.setText("");
@@ -166,6 +165,17 @@ private void addFunds() {
         catch(SQLException ex) {
             JOptionPane.showMessageDialog(this, "DB error: " + ex.getMessage());
             }
-    }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    // End of variables declaration//GEN-END:variables
+
 }
 

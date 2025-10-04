@@ -1,17 +1,13 @@
 package com.portfolio;
 import javax.swing.*;
+import java.sql.*;
 
 public class MainPage extends javax.swing.JFrame {
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainPage.class.getName());
 
 public MainPage() {
     initComponents();
-    jButton1.addActionListener(this::jButton1ActionPerformed);
-    jButton2.addActionListener(this::jButton2ActionPerformed);
 }
-
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -33,6 +29,11 @@ public MainPage() {
         });
 
         jButton2.setText("View Funds");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -73,22 +74,45 @@ public MainPage() {
             JOptionPane.showMessageDialog(this, "Please enter your name!");
             return;
         }
+        this.setVisible(false);
         AddFundsPage addFunds = new AddFundsPage(userName);
         addFunds.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        String userName = jTextField1.getText().trim();
-        if (userName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter your name!");
-            return;
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    String userName = jTextField1.getText().trim();
+    if (userName.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please enter your name!");
+        return;
+    }
+
+    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/portfolio_db","root","")) {
+        String sql = "SELECT COUNT(*) AS cnt FROM investments i " + "JOIN users u ON i.user_id = u.id "
+                   + "WHERE u.name = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, userName);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("cnt");
+                if (count == 0) {
+                    JOptionPane.showMessageDialog(this, "No investments found for this user!");
+                    return; 
+                }
+            }
         }
-        
-        ViewFundsPage viewFunds = new ViewFundsPage(userName);
-        viewFunds.setVisible(true);
-    }               
+    } 
+    catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "DB error: " + ex.getMessage());
+        return;
+    }
+    this.setVisible(false);
+    ViewFundsPage viewFunds = new ViewFundsPage(userName);
+    viewFunds.setVisible(true);
+    
+    }//GEN-LAST:event_jButton2ActionPerformed
+              
     public static void main(String args[]) {
-        
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -103,14 +127,13 @@ public MainPage() {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        java.awt.EventQueue.invokeLater(() -> new MainPage().setVisible(true));
-        try {
+                try {
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } 
         catch (Exception ex) {
         }
-
+        //</editor-fold>
+        java.awt.EventQueue.invokeLater(() -> new MainPage().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -120,3 +143,5 @@ public MainPage() {
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
+
+
