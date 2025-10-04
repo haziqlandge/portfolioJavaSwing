@@ -87,19 +87,17 @@ public MainPage() {
     }
 
     try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/portfolio_db","root","")) {
-        String sql = "SELECT COUNT(*) AS cnt FROM investments i " + "JOIN users u ON i.user_id = u.id "
-                   + "WHERE u.name = ?";
-
-        try (PreparedStatement pst = conn.prepareStatement(sql)) {
-            pst.setString(1, userName);
-            ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt("cnt");
-                if (count == 0) {
-                    JOptionPane.showMessageDialog(this, "No investments found for this user!");
-                    return; 
-                }
-            }
+        String sql = "SELECT 1 FROM users WHERE name = ? LIMIT 1";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, userName);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            // user exists
+        } 
+        else {
+            // user not exist
+            JOptionPane.showMessageDialog(this, "No investment found for this user!");
+            return;
         }
     } 
     catch (SQLException ex) {

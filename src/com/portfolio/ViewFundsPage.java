@@ -25,9 +25,7 @@ public class ViewFundsPage extends javax.swing.JFrame {
         double totalAmount = 0;
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/portfolio_db","root","")) {
-            String sql = "SELECT i.fund_name, i.amount " +
-                 "FROM investments i " +
-                 "JOIN users u ON i.user_id = u.id " +
+            String sql = "SELECT i.fund_name, i.amount " + "FROM investments i " + "JOIN users u ON i.user_id = u.id " +
                  "WHERE u.name = ?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -40,16 +38,13 @@ public class ViewFundsPage extends javax.swing.JFrame {
                 dataset.setValue(fundName, amount);
                 totalAmount += amount;
             }
-
         } 
         catch(SQLException ex) {
             JOptionPane.showMessageDialog(this, "DB error: " + ex.getMessage());
             return;
         }
 
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Portfolio - " + userName, dataset,true, true, false);
-
+        JFreeChart chart = ChartFactory.createPieChart( "Portfolio - " + userName, dataset,true, true, false);
         PiePlot plot = (PiePlot) chart.getPlot();
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})", 
                 NumberFormat.getCurrencyInstance(), NumberFormat.getPercentInstance()));
@@ -60,11 +55,8 @@ public class ViewFundsPage extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
         jPanel1.add(chartPanel, java.awt.BorderLayout.CENTER);
         jPanel1.validate();
-
-
         jLabel1.setText("Total Invested: $" + String.format("%.2f", totalAmount));
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -131,4 +123,6 @@ public class ViewFundsPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
+
+
 

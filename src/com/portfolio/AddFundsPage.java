@@ -123,8 +123,7 @@ public class AddFundsPage extends javax.swing.JFrame {
         return;
     }
 
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/portfolio_db","root","")) {
+        try (Connection conn = DriverManager.getConnection( "jdbc:mysql://localhost:3306/portfolio_db","root","")) {
 
             String insertUser = "INSERT IGNORE INTO users(name) VALUES(?)";
             try (PreparedStatement pstUser = conn.prepareStatement(insertUser)) {
@@ -155,9 +154,6 @@ public class AddFundsPage extends javax.swing.JFrame {
                 pstInv.setDouble(3, amount);
                 pstInv.executeUpdate();
             }
-
-
-
             JOptionPane.showMessageDialog(this, "Funds added successfully!");
             jTextField1.setText("");
             jTextField2.setText("");
@@ -167,7 +163,6 @@ public class AddFundsPage extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_jButton2ActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -176,6 +171,6 @@ public class AddFundsPage extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
-
 }
+
 
